@@ -41,4 +41,4 @@ A modern Laravel-based web application for browsing and exploring video games. U
 Clone the repo:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/games-library.git
+git clone https://github.com/YOUR_USERNAME/gamesLibrary.git
