@@ -17,7 +17,7 @@
                 <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition">
 
                     <img 
-                        src="{{ asset('storage/games/'.$game->image) }}" 
+                        src="{{ asset('storage/'.$game->image) }}" 
                         alt="{{ $game->title }}" 
                         class="w-full h-48 object-cover rounded mb-2"
                     >

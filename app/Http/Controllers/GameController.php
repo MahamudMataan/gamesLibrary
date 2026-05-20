@@ -2,87 +2,141 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Game;
 use App\Models\Genre;
-
+use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * HOME PAGE
      */
-    public function index()
-    {     
-        $genres = Genre::all();
-        $games = Game::all();
-        return view('pages.games', compact('games', 'genres'));
-
-    }
-    
-
     public function home()
     {
-        // Top 6 rated games
         $topGames = Game::orderBy('rating', 'desc')->take(6)->get();
-
-        // Latest 6 games
         $latestGames = Game::latest()->take(6)->get();
 
-        // Top 3 genres based on number of games
         $topGenres = Genre::withCount('games')
-                          ->orderBy('games_count', 'desc')
-                          ->take(3)
-                          ->get();
+            ->orderBy('games_count', 'desc')
+            ->take(3)
+            ->get();
 
         return view('pages.home', compact('topGames', 'latestGames', 'topGenres'));
     }
 
+    /**
+     * ALL GAMES PAGE
+     */
+    public function index()
+    {
+        $games = Game::latest()->get();
+        $genres = Genre::all();
+
+        return view('pages.games', compact('games', 'genres'));
+    }
 
     /**
-     * Show the form for creating a new resource.
+     * DASHBOARD PAGE
+     */
+    public function dashboard()
+    {
+        $games = Game::latest()->get();
+
+        return view('dashboard', compact('games'));
+    }
+
+    /**
+     * SHOW CREATE FORM
      */
     public function create()
     {
-        //
+        $genres = Genre::all();
+
+        return view('games.create', compact('genres'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * STORE GAME
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|unique:games,title',
+            'platform' => 'required',
+            'rating' => 'required|numeric',
+            'genre_id' => 'required',
+            'image' => 'required|image',
+        ]);
+
+        $imagePath = $request->file('image')->store('games', 'public');
+
+        Game::create([
+            'title' => $request->title,
+            'platform' => $request->platform,
+            'rating' => $request->rating,
+            'genre_id' => $request->genre_id,
+            'image' => $imagePath,
+        ]);
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Game added successfully!');
     }
 
     /**
-     * Display the specified resource.
-     */public function show(Game $game)
-    {
-    return view('pages.detail', compact('game'));   
-    }
-
-    /**
-     * Show the form for editing the specified resource.
+     * SHOW SINGLE GAME
      */
-    public function edit(string $id)
+    public function show(Game $game)
     {
-        //
-    }   
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        return view('pages.detail', compact('game'));
     }
 
     /**
-     * Remove the specified resource from storage.
+     * SHOW EDIT FORM
      */
-    public function destroy(string $id)
+    public function edit(Game $game)
     {
-        //
+        $genres = Genre::all();
+
+        return view('games.edit', compact('game', 'genres'));
     }
-}
+
+    /**
+     * UPDATE GAME
+     */
+    public function update(Request $request, Game $game)
+    {
+        $request->validate([
+            'title' => 'required',
+            'platform' => 'required',
+            'rating' => 'required|numeric',
+            'genre_id' => 'required',
+            'image' => 'nullable|image',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $game->image = $request->file('image')->store('games', 'public');
+        }
+
+        $game->update([
+            'title' => $request->title,
+            'platform' => $request->platform,
+            'rating' => $request->rating,
+            'genre_id' => $request->genre_id,
+            'image' => $game->image,
+        ]);
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Game updated successfully!');
+    }
+
+    /**
+     * DELETE GAME
+     */
+    public function destroy(Game $game)
+    {
+        $game->delete();
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Game deleted successfully!');
+    }
+};

@@ -9,7 +9,7 @@
         <!-- BIG IMAGE -->
         <div>
             <img 
-                src="{{ asset('storage/games/'.$game->image) }}" 
+                src="{{ asset('storage/'.$game->image) }}" 
                 alt="{{ $game->title }}" 
                 class="w-full h-[400px] object-cover rounded-lg shadow"
             >

@@ -1,93 +1,54 @@
-<!-- Include this script tag or install `@tailwindplus/elements` via npm: -->
-<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+<header class="bg-white border-b">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
 
-<header class="bg-white">
-  <nav aria-label="Global" class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+    <!-- Logo -->
     <div class="flex lg:flex-1">
       <a href="{{ route('home') }}" class="-m-1.5 p-1.5">
-        <span class="sr-only">Your Company</span>
-        <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="" class="h-8 w-auto" />
+        <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" class="h-8 w-auto" />
       </a>
     </div>
 
-    <div class="flex lg:hidden">
-      <button type="button" command="show-modal" commandfor="mobile-menu" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
-        <span class="sr-only">Open main menu</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6">
-          <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
+    <!-- Links -->
+    <div class="hidden lg:flex lg:gap-x-12">
+      <a href="{{ route('home') }}" class="text-sm font-semibold text-gray-900">Home</a>
+      <a href="{{ route('games.index') }}" class="text-sm font-semibold text-gray-900">Games</a>
+      <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-gray-900">Dashboard</a>
     </div>
-    <el-popover-group class="hidden lg:flex lg:gap-x-12">
-      <a href="{{ route('home') }}" class="text-sm/6 font-semibold text-gray-900">Home</a>
-      
-      <a href="{{ route('games.index') }}" class="text-sm/6 font-semibold text-gray-900">Games</a>
 
-      <div class="relative">
-      <button popovertarget="desktop-menu-product" class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-        Genre
-        <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 flex-none text-gray-400">
-        <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" />
-        </svg>
-      </button>
+    <!-- RIGHT SIDE (AUTH) -->
+    <div class="hidden lg:flex lg:flex-1 lg:justify-end items-center gap-4">
 
-      <el-popover 
-        id="desktop-menu-product" 
-        anchor="bottom" 
-        popover 
-        class="w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg outline-1 outline-gray-900/5 transition [--anchor-gap:0px] backdrop:bg-transparent open:block"
-      >
-        <div class="p-2 grid grid-cols-2 gap-2">
-        @foreach ($genres as $genre)
-          <a 
-          href="{{ route('genres.show', $genre->id) }}"
-          class="block text-center rounded-lg bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-indigo-100 hover:text-indigo-600 transition"
-          >
-          {{ $genre->name }}
-          </a>
-        @endforeach
-        </div>
-      </el-popover>
-      </div>
-    </el-popover-group>
+      @auth
+        <!-- Name -->
+        <span class="text-sm font-semibold text-gray-900">
+          {{ auth()->user()->name }}
+        </span>
 
-    <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-      <a href="#" class="text-sm/6 font-semibold text-gray-900">
-        Log in <span aria-hidden="true">&rarr;</span>
-      </a>
+        <!-- Profile -->
+        <a href="{{ route('profile.edit') }}" class="text-sm font-semibold text-indigo-600">
+          Profile
+        </a>
+
+        <!-- Logout -->
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="text-sm font-semibold text-red-600">
+            Logout
+          </button>
+        </form>
+      @endauth
+
+      @guest
+        <a href="{{ route('login') }}" class="text-sm font-semibold text-gray-900">
+          Log in →
+        </a>
+
+        <a href="{{ route('register') }}" class="text-sm font-semibold text-indigo-600">
+          Register
+        </a>
+      @endguest
+
     </div>
+
   </nav>
-
-  <el-dialog>
-    <dialog id="mobile-menu" class="backdrop:bg-transparent lg:hidden">
-      <div tabindex="0" class="fixed inset-0 focus:outline-none">
-        <el-dialog-panel class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          
-          <div class="flex items-center justify-between">
-            <a href="{{ route('home') }}" class="-m-1.5 p-1.5">
-              <span class="sr-only">Your Company</span>
-              <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" class="h-8 w-auto" />
-            </a>
-
-            <button type="button" command="close" commandfor="mobile-menu" class="-m-2.5 rounded-md p-2.5 text-gray-700">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="size-6">
-                <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </button>
-          </div>
-
-          <div class="mt-6 space-y-4">
-            <a href="{{ route('games.index') }}" class="block text-base font-semibold text-gray-900">Games</a>
-
-            @foreach ($genres as $genre)
-              <a href="{{ route('genres.show', $genre->id) }}" class="block text-base text-gray-700">
-                {{ $genre->name }}
-              </a>
-            @endforeach
-          </div>
-
-        </el-dialog-panel>
-      </div>
-    </dialog>
-  </el-dialog>
 </header>

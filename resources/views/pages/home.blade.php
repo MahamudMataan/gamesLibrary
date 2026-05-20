@@ -22,7 +22,7 @@
             <div class="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition">
                 
                 <img 
-                    src="{{ asset('storage/games/'.$game->image) }}" 
+                    src="{{ asset('storage/'.$game->image) }}" 
                     alt="{{ $game->title }}" 
                     class="w-full h-48 object-cover"
                 >
@@ -44,7 +44,7 @@
             <div class="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition">
 
                 <img 
-                    src="{{ asset('storage/games/'.$game->image) }}" 
+                    src="{{ asset('storage/'.$game->image) }}" 
                     alt="{{ $game->title }}" 
                     class="w-full h-48 object-cover"
                 >
